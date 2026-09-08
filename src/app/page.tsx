@@ -35,7 +35,7 @@ export default function Home() {
             textShadow: "0 0 4px rgba(255, 20, 147, 0.9), 0 0 8px rgba(255, 20, 147, 0.6)",
           }}
         >
-          <span style={{ color: "#ffffff" }}>+91- </span><span style={{ color: "#ff1493" }}>9124543915</span>
+          <span style={{ color: "#ffffff" }}>+91- </span><span style={{ color: "#90EE90" }}>9124543915</span>
         </div>
         <nav
           aria-label="Main navigation"
@@ -176,6 +176,7 @@ export default function Home() {
     </main>
   );
 }
+
 
 
 
