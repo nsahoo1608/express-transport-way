@@ -38,3 +38,58 @@ body {
   animation: phoneBlink 3s ease-in-out infinite;
 }
 
+
+@keyframes etwBrandPulse {
+  0%, 100% {
+    opacity: 1;
+    text-shadow:
+      0 0 4px rgba(255, 255, 255, 0.15),
+      0 0 12px rgba(0, 255, 120, 0.10);
+  }
+  50% {
+    opacity: 0.82;
+    text-shadow:
+      0 0 8px rgba(0, 255, 120, 0.45),
+      0 0 20px rgba(0, 255, 120, 0.25);
+  }
+}
+
+.etw-brand-pulse {
+  animation: etwBrandPulse 3s ease-in-out infinite;
+}
+
+@keyframes etwQuoteGlow {
+  0%, 100% {
+    background: #00c853;
+    box-shadow:
+      0 0 8px rgba(0, 200, 83, 0.55),
+      0 0 22px rgba(0, 200, 83, 0.25);
+  }
+
+  33% {
+    background: #ffd600;
+    box-shadow:
+      0 0 10px rgba(255, 214, 0, 0.65),
+      0 0 28px rgba(255, 214, 0, 0.30);
+  }
+
+  66% {
+    background: #ff1493;
+    box-shadow:
+      0 0 10px rgba(255, 20, 147, 0.65),
+      0 0 28px rgba(255, 20, 147, 0.30);
+  }
+}
+
+.etw-quote-button {
+  animation: etwQuoteGlow 4s ease-in-out infinite;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.etw-quote-button:hover {
+  animation-play-state: paused;
+  transform: translateY(-2px) scale(1.02);
+  box-shadow:
+    0 0 14px rgba(255, 255, 255, 0.35),
+    0 0 30px rgba(255, 255, 255, 0.20);
+}

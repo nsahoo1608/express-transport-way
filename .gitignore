@@ -44,3 +44,9 @@ next-env.d.ts
 *.bak
 
 *.corrupt-backup
+
+# Local AI tool folders
+.agents/
+.claude/
+.cursor/
+.devin/
