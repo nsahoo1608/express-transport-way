@@ -35,7 +35,7 @@ export default function Home() {
             textShadow: "0 0 4px rgba(255, 20, 147, 0.9), 0 0 8px rgba(255, 20, 147, 0.6)",
           }}
         >
-          <span style={{ color: "#ffffff" }}>+91- </span><span style={{ color: "#90EE90" }}>9124543915</span>
+          <span style={{ color: "#ffffff" }}>+91- </span><span className="phone-blink" style={{ color: "#00FF00", textShadow: "0 0 5px #00FF00, 0 0 10px #00FF00, 0 0 18px #00FF00" }}>9124543915</span>
         </div>
         <nav
           aria-label="Main navigation"
@@ -176,6 +176,8 @@ export default function Home() {
     </main>
   );
 }
+
+
 
 
 
