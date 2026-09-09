@@ -1,60 +1,59 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="border-t border-white/10 bg-slate-950">
-      <div className="mx-auto grid max-w-7xl gap-10 px-6 py-14 md:grid-cols-3 lg:px-8">
+    <footer className="border-t border-slate-800 bg-slate-950 text-slate-300">
+      <div className="mx-auto grid max-w-7xl gap-10 px-5 py-12 md:grid-cols-3">
         <div>
-          <div className="mb-4 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-500 font-black text-slate-950">
-              ET
-            </div>
-
-            <div>
-              <div className="text-sm font-extrabold tracking-widest text-white">
-                EXPRESS
-              </div>
-              <div className="text-xs font-semibold tracking-[0.2em] text-orange-400">
-                TRANSPORT WAY
-              </div>
-            </div>
-          </div>
-
-          <p className="max-w-md text-sm leading-7 text-slate-400">
+          <h2 className="text-lg font-extrabold tracking-wide text-white">
+            EXPRESS TRANSPORT WAY
+          </h2>
+          <p className="mt-2 text-xs font-medium uppercase tracking-[0.2em] text-emerald-400">
+            Mining & Industrial Transportation
+          </p>
+          <p className="mt-4 max-w-sm text-sm leading-6 text-slate-400">
             Reliable transportation solutions for mining, mineral and
-            industrial material movement across Odisha.
+            industrial materials across Odisha and beyond.
           </p>
         </div>
 
         <div>
-          <h3 className="mb-4 text-sm font-bold uppercase tracking-widest text-white">
-            Quick Links
-          </h3>
-
-          <div className="flex flex-col gap-3 text-sm text-slate-400">
-            <Link href="/" className="hover:text-orange-400">Home</Link>
-            <Link href="/about" className="hover:text-orange-400">About Us</Link>
-            <Link href="/services" className="hover:text-orange-400">Services</Link>
-            <Link href="/contact" className="hover:text-orange-400">Contact</Link>
+          <h3 className="font-bold text-white">Quick Links</h3>
+          <div className="mt-4 flex flex-col gap-2 text-sm">
+            <Link href="/about" className="hover:text-emerald-400">
+              About
+            </Link>
+            <Link href="/services" className="hover:text-emerald-400">
+              Services
+            </Link>
+            <Link href="/fleet" className="hover:text-emerald-400">
+              Fleet
+            </Link>
+            <Link href="/contact" className="hover:text-emerald-400">
+              Contact
+            </Link>
           </div>
         </div>
 
         <div>
-          <h3 className="mb-4 text-sm font-bold uppercase tracking-widest text-white">
-            Our Focus
-          </h3>
+          <h3 className="font-bold text-white">Business Access</h3>
+          <p className="mt-4 text-sm leading-6 text-slate-400">
+            Authorized ETW personnel can access the internal administration
+            system.
+          </p>
 
-          <div className="space-y-3 text-sm text-slate-400">
-            <p>Mining Material Transportation</p>
-            <p>Heavy & Bulk Material Movement</p>
-            <p>Industrial Transportation</p>
-            <p>Odisha-Wide Operations</p>
-          </div>
+          <Link
+            href="/admin/login"
+            className="mt-5 inline-flex rounded-lg border border-emerald-500/40 px-4 py-2.5 text-sm font-semibold text-emerald-400 transition hover:bg-emerald-500 hover:text-slate-950"
+          >
+            Administration
+          </Link>
         </div>
       </div>
 
-      <div className="border-t border-white/10 px-6 py-5 text-center text-xs text-slate-500">
-        © {new Date().getFullYear()} Express Transport Way. All rights reserved.
+      <div className="border-t border-slate-800 px-5 py-5 text-center text-xs text-slate-500">
+        © {new Date().getFullYear()} Express Transport Way. All rights
+        reserved.
       </div>
     </footer>
   );

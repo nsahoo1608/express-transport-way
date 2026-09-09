@@ -167,74 +167,10 @@ export default async function DocumentReviewPage({
             automatically.
           </p>
 
-          <div className="mt-6 flex flex-wrap gap-3">
-            <form
-              action={`/api/employees/documents/${document.id}`}
-              method="POST"
-            >
-              <input
-                type="hidden"
-                name="verificationStatus"
-                value="UNDER_REVIEW"
-              />
-
-              <button
-                type="submit"
-                className="rounded-lg border border-blue-500/50 bg-blue-500/10 px-4 py-2 text-sm font-semibold text-blue-300 hover:bg-blue-500/20"
-              >
-                Move to Under Review
-              </button>
-            </form>
-
-            <form
-              action={`/api/employees/documents/${document.id}`}
-              method="POST"
-            >
-              <input
-                type="hidden"
-                name="verificationStatus"
-                value="VERIFIED"
-              />
-
-              <button
-                type="submit"
-                className="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-emerald-400"
-              >
-                Verify Document
-              </button>
-            </form>
-
-            <form
-              action={`/api/employees/documents/${document.id}`}
-              method="POST"
-            >
-              <input
-                type="hidden"
-                name="verificationStatus"
-                value="REJECTED"
-              />
-
-              <button
-                type="submit"
-                className="rounded-lg bg-red-500/10 px-4 py-2 text-sm font-semibold text-red-300 ring-1 ring-red-500/40 hover:bg-red-500/20"
-              >
-                Reject Document
-              </button>
-            </form>
-          </div>
-
-          <div className="mt-6 rounded-xl border border-slate-800 bg-slate-950 p-5">
-            <p className="text-sm text-slate-400">
-              Rejection remarks are required by the verification API.
-            </p>
-
-            <p className="mt-2 text-xs text-slate-500">
-              The current buttons are intentionally connected to the
-              existing server verification endpoint. We will add the
-              proper interactive verification form after confirming this
-              page compiles.
-            </p>
-          </div>
+          <VerificationActions
+            documentId={document.id}
+            currentStatus={document.verificationStatus ?? "SUBMITTED"}
+          />
         </section>
 
         <div className="mt-8 rounded-xl border border-red-900/40 bg-red-950/10 p-5">
