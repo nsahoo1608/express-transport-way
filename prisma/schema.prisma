@@ -22,56 +22,69 @@ model QuoteRequest {
 }
 
 model JobApplication {
-  id             String   @id @default(cuid())
-  fullName       String
-  phone          String
-  email          String?
-  position       String
-  experience     String?
-  qualification  String?
-  address        String?
-  resumeUrl      String?
-  coverLetter    String?
-  status         String   @default("RECEIVED")
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id            String   @id @default(cuid())
+  fullName      String
+  phone         String
+  email         String?
+  position      String
+  experience    String?
+  qualification String?
+  address       String?
+  resumeUrl     String?
+  coverLetter   String?
+  status        String   @default("RECEIVED")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
+
 model Employee {
-  id                String    @id @default(cuid())
-  employeeId        String    @unique
-  fullName          String
-  phone             String
-  email             String?
-  dateOfBirth       DateTime?
-  gender            String?
-  address           String?
-  designation       String
-  department        String?
-  joiningDate       DateTime
-  employmentType    String?
-  employmentStatus  String    @default("ACTIVE")
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-  salaryHistory EmployeeSalary[]
-  advanceHistory EmployeeAdvance[]
+  id                           String                  @id @default(cuid())
+  employeeId                   String                  @unique
+  fullName                     String
+  phone                        String
+  email                        String?
+  dateOfBirth                  DateTime?
+  gender                       String?
+  address                      String?
+  designation                  String
+  department                   String?
+  joiningDate                  DateTime
+  employmentType               String?
+  employmentStatus             String                  @default("ACTIVE")
+  createdAt                    DateTime                @default(now())
+  updatedAt                    DateTime                @updatedAt
+  bloodGroup                   String?
+  emergencyContactAddress      String?
+  emergencyContactAltPhone     String?
+  emergencyContactName         String?
+  emergencyContactPhone        String?
+  emergencyContactRelationship String?
+  maritalStatus                String?
+  spouseName                   String?
+  advanceHistory               EmployeeAdvance[]
+  careerHistory                EmployeeCareerHistory[]
+  documents                    EmployeeDocument[]
+  insuranceHistory             EmployeeInsurance[]
+  salaryHistory                EmployeeSalary[]
 }
+
 model EmployeeSalary {
-  id             String   @id @default(cuid())
-  employeeId     String
-  employee       Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
-  basicSalary    Decimal
-  allowances     Decimal  @default(0)
-  deductions     Decimal  @default(0)
-  effectiveFrom  DateTime
-  effectiveTo    DateTime?
-  createdAt      DateTime @default(now())
+  id            String    @id @default(cuid())
+  employeeId    String
+  basicSalary   Decimal
+  allowances    Decimal   @default(0)
+  deductions    Decimal   @default(0)
+  effectiveFrom DateTime
+  effectiveTo   DateTime?
+  createdAt     DateTime  @default(now())
+  employee      Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
 
   @@index([employeeId])
 }
+
 model EmployeeAdvance {
   id              String   @id @default(cuid())
   employeeId      String
-  employee        Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
   amount          Decimal
   advanceDate     DateTime @default(now())
   reason          String?
@@ -80,6 +93,70 @@ model EmployeeAdvance {
   notes           String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+  employee        Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
 
   @@index([employeeId])
+}
+
+model EmployeeCareerHistory {
+  id                  String   @id @default(cuid())
+  employeeId          String
+  designation         String
+  department          String?
+  effectiveDate       DateTime
+  previousDesignation String?
+  remarks             String?
+  createdAt           DateTime @default(now())
+  employee            Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId])
+}
+
+model EmployeeDocument {
+  id                  String    @id @default(cuid())
+  employeeId          String
+  documentType        String
+  documentName        String
+  documentUrl         String
+  uploadedAt          DateTime  @default(now())
+  verificationRemarks String?
+  verificationStatus  String    @default("SUBMITTED")
+  verifiedAt          DateTime?
+  verifiedBy          String?
+  employee            Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId])
+}
+
+model AdminUser {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         String   @default("ADMIN")
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model EmployeeInsurance {
+  id                 String    @id @default(cuid())
+  employeeId         String
+  insuranceType      String
+  provider           String
+  policyNumber       String
+  coverageAmount     Decimal?
+  startDate          DateTime
+  expiryDate         DateTime?
+  status             String    @default("ACTIVE")
+  verificationStatus String    @default("SUBMITTED")
+  policyDocumentUrl  String?
+  notes              String?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  employee           Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId])
+  @@index([policyNumber])
+  @@index([verificationStatus])
 }

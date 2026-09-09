@@ -1,4 +1,5 @@
-import { NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 
 export async function POST(request: Request) {
   try {
@@ -33,30 +34,48 @@ export async function POST(request: Request) {
       );
     }
 
+    const quoteRequest = await prisma.quoteRequest.create({
+      data: {
+        name: String(name).trim(),
+        phone: String(phone).trim(),
+        applicantType: String(applicantType).trim(),
+        onBehalfOf: String(onBehalfOf).trim(),
+        material: String(material).trim(),
+        from: String(from).trim(),
+        to: String(to).trim(),
+        requirement: requirement ? String(requirement).trim() : null,
+      },
+    });
+
     return NextResponse.json(
       {
         success: true,
         message: "Quote request received successfully.",
         data: {
-          name,
-          phone,
-          applicantType,
-          onBehalfOf,
-          material,
-          from,
-          to,
-          requirement: requirement || "",
+          id: quoteRequest.id,
+          name: quoteRequest.name,
+          phone: quoteRequest.phone,
+          applicantType: quoteRequest.applicantType,
+          onBehalfOf: quoteRequest.onBehalfOf,
+          material: quoteRequest.material,
+          from: quoteRequest.from,
+          to: quoteRequest.to,
+          requirement: quoteRequest.requirement,
+          status: quoteRequest.status,
+          createdAt: quoteRequest.createdAt,
         },
       },
       { status: 201 }
     );
-  } catch {
+  } catch (error) {
+    console.error("Quote request error:", error);
+
     return NextResponse.json(
       {
         success: false,
-        message: "Invalid request.",
+        message: "Unable to save quote request.",
       },
-      { status: 400 }
+      { status: 500 }
     );
   }
 }
