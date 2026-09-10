@@ -52,8 +52,17 @@ export default function Footer() {
       </div>
 
       <div className="border-t border-slate-800 px-5 py-5 text-center text-xs text-slate-500">
-        © {new Date().getFullYear()} Express Transport Way. All rights
-        reserved.
+        © {new Date().getFullYear()} Express Transport Way. All rights reserved.
+        <span className="mx-2 text-slate-700">|</span>
+        Website designed & developed by
+        <a
+          href="https://appleinfotech.co.in"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="ml-1 font-semibold text-slate-400 transition hover:text-emerald-400"
+        >
+          APPLE INFOTECH PVT. LTD.
+        </a>
       </div>
     </footer>
   );
