@@ -66,6 +66,7 @@ model Employee {
   documents                    EmployeeDocument[]
   insuranceHistory             EmployeeInsurance[]
   salaryHistory                EmployeeSalary[]
+  auditLogs                    EmployeeAuditLog[]
 }
 
 model EmployeeSalary {
@@ -140,23 +141,42 @@ model AdminUser {
 }
 
 model EmployeeInsurance {
-  id                 String    @id @default(cuid())
-  employeeId         String
-  insuranceType      String
-  provider           String
-  policyNumber       String
-  coverageAmount     Decimal?
-  startDate          DateTime
-  expiryDate         DateTime?
-  status             String    @default("ACTIVE")
-  verificationStatus String    @default("SUBMITTED")
-  policyDocumentUrl  String?
-  notes              String?
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
-  employee           Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  id                  String    @id @default(cuid())
+  employeeId          String
+  insuranceType       String
+  provider            String
+  policyNumber        String
+  coverageAmount      Decimal?
+  startDate           DateTime
+  expiryDate          DateTime?
+  status              String    @default("ACTIVE")
+  verificationStatus  String    @default("SUBMITTED")
+  verifiedAt          DateTime?
+  verifiedBy          String?
+  verificationRemarks String?
+  policyDocumentUrl   String?
+  notes               String?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  employee            Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
 
   @@index([employeeId])
   @@index([policyNumber])
   @@index([verificationStatus])
+}
+
+model EmployeeAuditLog {
+  id            String   @id @default(cuid())
+  employeeId    String
+  adminEmail    String
+  action        String
+  fieldName     String
+  previousValue String?
+  newValue      String?
+  createdAt     DateTime @default(now())
+  employee      Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId])
+  @@index([adminEmail])
+  @@index([createdAt])
 }
