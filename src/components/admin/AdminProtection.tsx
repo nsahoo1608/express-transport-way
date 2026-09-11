@@ -14,12 +14,11 @@ export default function AdminProtection({
       event.preventDefault();
     };
 
-    const preventCopy = (event: ClipboardEvent) => {
-      event.preventDefault();
-    };
-
     const preventPrint = (event: KeyboardEvent) => {
-      if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "p") {
+      if (
+        (event.ctrlKey || event.metaKey) &&
+        event.key.toLowerCase() === "p"
+      ) {
         event.preventDefault();
       }
     };
@@ -29,15 +28,11 @@ export default function AdminProtection({
     };
 
     document.addEventListener("contextmenu", preventContextMenu);
-    document.addEventListener("copy", preventCopy);
-    document.addEventListener("cut", preventCopy);
     document.addEventListener("keydown", preventPrint);
     document.addEventListener("visibilitychange", handleVisibility);
 
     return () => {
       document.removeEventListener("contextmenu", preventContextMenu);
-      document.removeEventListener("copy", preventCopy);
-      document.removeEventListener("cut", preventCopy);
       document.removeEventListener("keydown", preventPrint);
       document.removeEventListener("visibilitychange", handleVisibility);
     };
@@ -48,12 +43,22 @@ export default function AdminProtection({
       className={hidden ? "relative blur-xl" : "relative"}
       onDragStart={(event) => event.preventDefault()}
     >
-      <div className="pointer-events-none fixed inset-0 z-[9998] overflow-hidden opacity-[0.055]">
-        <div className="grid h-full w-full rotate-[-18deg] grid-cols-3 gap-24 text-[28px] font-black uppercase tracking-[0.35em] text-white">
-          {Array.from({ length: 30 }).map((_, index) => (
-            <span key={index} className="flex items-center justify-center">
-              ETW CONFIDENTIAL
-            </span>
+      <div className="pointer-events-none fixed inset-0 z-[9998] overflow-hidden select-none opacity-[0.04]">
+        <div className="flex h-full w-full flex-col justify-around gap-20 py-20">
+          {Array.from({ length: 6 }).map((_, row) => (
+            <div
+              key={row}
+              className="flex w-full justify-around whitespace-nowrap"
+            >
+              {Array.from({ length: 2 }).map((_, column) => (
+                <span
+                  key={column}
+                  className="rotate-[-18deg] text-[24px] font-black uppercase tracking-[0.35em] text-white"
+                >
+                  ETW CONFIDENTIAL
+                </span>
+              ))}
+            </div>
           ))}
         </div>
       </div>

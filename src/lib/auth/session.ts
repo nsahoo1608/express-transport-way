@@ -42,3 +42,34 @@ export async function verifyAdminSession(token: string) {
     return null;
   }
 }
+
+export async function createOwnerSession(payload: {
+  ownerId: string;
+  name: string;
+}) {
+  return new SignJWT(payload)
+    .setProtectedHeader({ alg: "HS256" })
+    .setIssuedAt()
+    .setExpirationTime("8h")
+    .sign(secretKey);
+}
+
+export async function verifyOwnerSession(token: string) {
+  try {
+    const { payload } = await jwtVerify(token, secretKey);
+
+    if (
+      typeof payload.ownerId !== "string" ||
+      typeof payload.name !== "string"
+    ) {
+      return null;
+    }
+
+    return {
+      ownerId: payload.ownerId,
+      name: payload.name,
+    };
+  } catch {
+    return null;
+  }
+}

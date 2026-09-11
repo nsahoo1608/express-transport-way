@@ -1,9 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
+import PortalEntry from "@/components/portal/PortalEntry";
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-white">
+      <PortalEntry />
       {/* EXISTING HERO - PRESERVED */}
       <section className="relative w-full overflow-hidden">
         <Image

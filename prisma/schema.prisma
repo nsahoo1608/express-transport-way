@@ -1,4 +1,4 @@
-generator client {
+﻿generator client {
   provider = "prisma-client-js"
 }
 
@@ -62,11 +62,11 @@ model Employee {
   maritalStatus                String?
   spouseName                   String?
   advanceHistory               EmployeeAdvance[]
+  auditLogs                    EmployeeAuditLog[]
   careerHistory                EmployeeCareerHistory[]
   documents                    EmployeeDocument[]
   insuranceHistory             EmployeeInsurance[]
   salaryHistory                EmployeeSalary[]
-  auditLogs                    EmployeeAuditLog[]
 }
 
 model EmployeeSalary {
@@ -119,6 +119,13 @@ model EmployeeDocument {
   documentType        String
   documentName        String
   documentUrl         String
+  documentReference   String?
+  fileHash            String?
+  fileSize            Int?
+  fileMimeType        String?
+  blobPath            String?
+  uploadedIp          String?
+  uploadedUserAgent   String?
   uploadedAt          DateTime  @default(now())
   verificationRemarks String?
   verificationStatus  String    @default("SUBMITTED")
@@ -151,13 +158,13 @@ model EmployeeInsurance {
   expiryDate          DateTime?
   status              String    @default("ACTIVE")
   verificationStatus  String    @default("SUBMITTED")
-  verifiedAt          DateTime?
-  verifiedBy          String?
-  verificationRemarks String?
   policyDocumentUrl   String?
   notes               String?
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
+  verificationRemarks String?
+  verifiedAt          DateTime?
+  verifiedBy          String?
   employee            Employee  @relation(fields: [employeeId], references: [id], onDelete: Cascade)
 
   @@index([employeeId])
@@ -180,3 +187,193 @@ model EmployeeAuditLog {
   @@index([adminEmail])
   @@index([createdAt])
 }
+
+model VehicleOwner {
+  id               String                 @id @default(cuid())
+  ownerId          String                 @unique
+  ownerType        String                 @default("INDIVIDUAL")
+  name             String
+  companyName      String?
+  phone            String
+  email            String?
+  address          String?
+  pan              String?
+  gstin            String?
+  kycStatus        String                 @default("PENDING")
+  accountStatus    String                 @default("PENDING")
+  createdAt        DateTime               @default(now())
+  updatedAt        DateTime               @updatedAt
+  account          OwnerAccount?
+  activationTokens OwnerActivationToken[]
+  createdDocuments OwnerDocument[]
+  vehicles         Vehicle[]
+  agreements       VehicleAgreement[]
+
+  @@index([phone])
+  @@index([kycStatus])
+  @@index([accountStatus])
+}
+
+model OwnerAccount {
+  id              String       @id @default(cuid())
+  ownerId         String       @unique
+  passwordHash    String
+  isActive        Boolean      @default(true)
+  mustSetPassword Boolean      @default(true)
+  lastLoginAt     DateTime?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  owner           VehicleOwner @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+}
+
+model Vehicle {
+  id                 String             @id @default(cuid())
+  vehicleId          String             @unique
+  registrationNumber String             @unique
+  vehicleType        String
+  make               String?
+  model              String?
+  manufacturingYear  Int?
+  ownershipType      String
+  ownerId            String
+  status             String             @default("PENDING")
+  rcNumber           String?
+  rcExpiryDate       DateTime?
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  owner              VehicleOwner       @relation(fields: [ownerId], references: [id])
+  agreements         VehicleAgreement[]
+
+  @@index([ownerId])
+  @@index([ownershipType])
+  @@index([status])
+}
+
+model VehicleAgreement {
+  id                        String       @id @default(cuid())
+  agreementId               String       @unique
+  ownerId                   String
+  vehicleId                 String
+  agreementType             String
+  startDate                 DateTime
+  expiryDate                DateTime?
+  rateType                  String?
+  rate                      Decimal?
+  paymentTerms              String?
+  fuelResponsibility        String?
+  driverResponsibility      String?
+  maintenanceResponsibility String?
+  status                    String       @default("SUBMITTED")
+  documentUrl               String?
+  verifiedBy                String?
+  verifiedAt                DateTime?
+  verificationRemarks       String?
+  createdAt                 DateTime     @default(now())
+  updatedAt                 DateTime     @updatedAt
+  owner                     VehicleOwner @relation(fields: [ownerId], references: [id])
+  vehicle                   Vehicle      @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+
+  @@index([ownerId])
+  @@index([vehicleId])
+  @@index([status])
+  @@index([expiryDate])
+}
+
+model OwnerActivationToken {
+  id        String       @id @default(cuid())
+  ownerId   String
+  tokenHash String       @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime     @default(now())
+  owner     VehicleOwner @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  @@index([ownerId])
+  @@index([expiresAt])
+}
+
+model OwnerDocument {
+  id                  String       @id @default(cuid())
+  ownerId             String
+  documentType        String
+  documentName        String
+  documentUrl         String
+  documentReference   String?
+  fileHash            String?
+  fileSize            Int?
+  fileMimeType        String?
+  blobPath            String?
+  uploadedIp          String?
+  uploadedUserAgent   String?
+  verificationStatus  String       @default("SUBMITTED")
+  verificationRemarks String?
+  verifiedBy          String?
+  verifiedAt          DateTime?
+  createdAt           DateTime     @default(now())
+  updatedAt           DateTime     @updatedAt
+  owner               VehicleOwner @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  verifications       OwnerDocumentVerification[]
+  verificationAudits  OwnerDocumentVerificationAudit[]
+
+  @@index([ownerId])
+  @@index([verificationStatus])
+}
+
+model OwnerDocumentVerification {
+  id                 String         @id @default(cuid())
+  documentId         String
+  overallStatus      String         @default("PENDING")
+  verificationSource String?
+  sourceReference    String?
+  checkedBy          String?
+  checkedAt          DateTime?
+  confidenceScore    Decimal?
+  finalRemarks       String?
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+
+  document           OwnerDocument  @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  checks             OwnerDocumentVerificationCheck[]
+
+  @@index([documentId])
+  @@index([overallStatus])
+  @@index([verificationSource])
+}
+
+model OwnerDocumentVerificationCheck {
+  id             String                    @id @default(cuid())
+  verificationId String
+  checkType      String
+  status         String
+  source         String?
+  reference      String?
+  result         String?
+  remarks        String?
+  checkedAt      DateTime                  @default(now())
+
+  verification   OwnerDocumentVerification @relation(fields: [verificationId], references: [id], onDelete: Cascade)
+
+  @@index([verificationId])
+  @@index([checkType])
+  @@index([status])
+}
+
+model OwnerDocumentVerificationAudit {
+  id             String   @id @default(cuid())
+  documentId     String
+  verificationId String?
+  adminEmail      String?
+  action         String
+  previousStatus String?
+  newStatus      String?
+  remarks        String?
+  createdAt      DateTime @default(now())
+
+  document       OwnerDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+  @@index([verificationId])
+  @@index([adminEmail])
+  @@index([createdAt])
+}
+

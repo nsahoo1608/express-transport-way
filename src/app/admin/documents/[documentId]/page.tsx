@@ -1,4 +1,4 @@
-import { cookies } from "next/headers";
+﻿import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
@@ -29,19 +29,23 @@ export default async function DocumentReviewPage({
 
   const { documentId } = await params;
 
-  const document = await prisma.employeeDocument.findUnique({
+  const document = await prisma.ownerDocument.findUnique({
     where: {
       id: documentId,
     },
     include: {
-      employee: {
+      owner: {
         select: {
-          employeeId: true,
-          fullName: true,
+          ownerId: true,
+          name: true,
+          companyName: true,
           phone: true,
           email: true,
-          designation: true,
-          department: true,
+          address: true,
+          pan: true,
+          gstin: true,
+          kycStatus: true,
+          accountStatus: true,
         },
       },
     },
@@ -59,15 +63,15 @@ export default async function DocumentReviewPage({
             href="/admin/documents"
             className="text-sm font-medium text-emerald-400 hover:text-emerald-300"
           >
-            ← Back to Documents
+            â† Back to Documents
           </Link>
 
           <h1 className="mt-4 text-3xl font-bold">
-            Document Review
+            Owner Document Review
           </h1>
 
           <p className="mt-2 text-slate-400">
-            Review and verify employee documentation
+            Review and verify documentation submitted by a vehicle owner
           </p>
         </div>
 
@@ -75,15 +79,21 @@ export default async function DocumentReviewPage({
           <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
             <div>
               <p className="text-sm text-slate-400">
-                Employee
+                Owner
               </p>
 
               <h2 className="mt-1 text-2xl font-semibold">
-                {document.employee.fullName}
+                {document.owner.name}
               </h2>
 
-              <p className="mt-1 text-emerald-400">
-                {document.employee.employeeId}
+              {document.owner.companyName && (
+                <p className="mt-1 text-slate-400">
+                  {document.owner.companyName}
+                </p>
+              )}
+
+              <p className="mt-1 font-mono text-emerald-400">
+                {document.owner.ownerId}
               </p>
             </div>
 
@@ -91,29 +101,46 @@ export default async function DocumentReviewPage({
           </div>
 
           <div className="mt-8 grid gap-5 md:grid-cols-2">
-            <Info label="Document Type" value={document.documentType} />
-            <Info label="Document Name" value={document.documentName} />
-            <Info label="Employee Phone" value={document.employee.phone} />
             <Info
-              label="Employee Email"
-              value={document.employee.email ?? "Not provided"}
+              label="Document Type"
+              value={document.documentType}
             />
+
             <Info
-              label="Designation"
-              value={document.employee.designation}
+              label="Document Name"
+              value={document.documentName}
             />
+
             <Info
-              label="Department"
-              value={document.employee.department ?? "Not specified"}
+              label="Owner Phone"
+              value={document.owner.phone}
             />
+
+            <Info
+              label="Owner Email"
+              value={document.owner.email ?? "Not provided"}
+            />
+
+            <Info
+              label="Owner KYC Status"
+              value={document.owner.kycStatus}
+            />
+
+            <Info
+              label="Account Status"
+              value={document.owner.accountStatus}
+            />
+
             <Info
               label="Submitted"
-              value={formatDate(document.uploadedAt)}
+              value={formatDate(document.createdAt)}
             />
+
             <Info
               label="Verified By"
               value={document.verifiedBy ?? "Not verified"}
             />
+
             <Info
               label="Verified At"
               value={
@@ -134,7 +161,7 @@ export default async function DocumentReviewPage({
             </p>
 
             <a
-              href={document.documentUrl}
+          href={`/api/admin/documents/${document.id}/file`}
               target="_blank"
               rel="noopener noreferrer"
               className="mt-4 inline-flex rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-emerald-400"
@@ -143,6 +170,67 @@ export default async function DocumentReviewPage({
             </a>
           </div>
 
+          <div className="mt-6 rounded-xl border border-blue-900/50 bg-blue-950/10 p-5">
+            <p className="text-sm font-semibold text-blue-300">
+              Evidence & Upload Details
+            </p>
+
+            <div className="mt-4 grid gap-4 md:grid-cols-2">
+              <Info
+                label="Document Reference"
+                value={document.documentReference ?? "Not recorded"}
+              />
+
+              <Info
+                label="Upload Time"
+                value={formatDate(document.createdAt)}
+              />
+
+              <Info
+                label="File Size"
+                value={
+                  document.fileSize
+                    ? `${(document.fileSize / 1024 / 1024).toFixed(2)} MB`
+                    : "Not recorded"
+                }
+              />
+
+              <Info
+                label="MIME Type"
+                value={document.fileMimeType ?? "Not recorded"}
+              />
+
+              <Info
+                label="Upload IP"
+                value={document.uploadedIp ?? "Not recorded"}
+              />
+
+              <Info
+                label="Blob Path"
+                value={document.blobPath ?? "Not recorded"}
+              />
+            </div>
+
+            <div className="mt-4 rounded-xl border border-slate-800 bg-slate-950 p-4">
+              <p className="text-xs uppercase tracking-wide text-slate-500">
+                SHA-256 File Hash
+              </p>
+
+              <p className="mt-2 break-all font-mono text-xs text-slate-300">
+                {document.fileHash ?? "Not recorded"}
+              </p>
+            </div>
+
+            <div className="mt-4 rounded-xl border border-slate-800 bg-slate-950 p-4">
+              <p className="text-xs uppercase tracking-wide text-slate-500">
+                Upload User-Agent / Device
+              </p>
+
+              <p className="mt-2 break-all text-xs text-slate-400">
+                {document.uploadedUserAgent ?? "Not recorded"}
+              </p>
+            </div>
+          </div>
           {document.verificationRemarks && (
             <div className="mt-6 rounded-xl border border-amber-900/60 bg-amber-950/20 p-5">
               <p className="text-sm font-semibold text-amber-300">
@@ -163,8 +251,8 @@ export default async function DocumentReviewPage({
 
           <p className="mt-2 text-sm text-slate-400">
             Verification changes are processed securely by the server.
-            Verified date and administrator identity are recorded
-            automatically.
+            Administrator identity, verification time and remarks are
+            recorded with the document.
           </p>
 
           <VerificationActions
@@ -175,12 +263,12 @@ export default async function DocumentReviewPage({
 
         <div className="mt-8 rounded-xl border border-red-900/40 bg-red-950/10 p-5">
           <p className="text-sm font-semibold text-red-300">
-            Confidential Employee Information
+            Confidential Owner Information
           </p>
 
           <p className="mt-2 text-sm text-slate-400">
-            Employee documents and personal information are restricted
-            to authorized Express Transport Way administrators.
+            Owner documents and personal information are restricted to
+            authorized Express Transport Way administrators.
           </p>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { cookies } from "next/headers";
+﻿import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { verifyAdminSession } from "@/lib/auth/session";
@@ -17,15 +17,16 @@ export default async function AdminDocumentsPage() {
     redirect("/admin/login");
   }
 
-  const documents = await prisma.employeeDocument.findMany({
+  const documents = await prisma.ownerDocument.findMany({
     orderBy: {
-      uploadedAt: "desc",
+      createdAt: "desc",
     },
     include: {
-      employee: {
+      owner: {
         select: {
-          employeeId: true,
-          fullName: true,
+          ownerId: true,
+          name: true,
+          companyName: true,
         },
       },
     },
@@ -41,11 +42,11 @@ export default async function AdminDocumentsPage() {
             </p>
 
             <h1 className="mt-3 text-3xl font-bold">
-              Employee Documents
+              Owner Documents
             </h1>
 
             <p className="mt-2 text-slate-400">
-              Review and verify employee documentation
+              Review and verify documents submitted by vehicle owners
             </p>
           </div>
 
@@ -100,7 +101,7 @@ export default async function AdminDocumentsPage() {
               <thead className="border-b border-slate-800 bg-slate-950/60">
                 <tr>
                   <th className="px-5 py-4 font-semibold text-slate-300">
-                    Employee
+                    Owner
                   </th>
 
                   <th className="px-5 py-4 font-semibold text-slate-300">
@@ -133,11 +134,17 @@ export default async function AdminDocumentsPage() {
                   >
                     <td className="px-5 py-4">
                       <div className="font-medium text-white">
-                        {document.employee.fullName}
+                        {document.owner.name}
                       </div>
 
+                      {document.owner.companyName && (
+                        <div className="mt-1 text-xs text-slate-400">
+                          {document.owner.companyName}
+                        </div>
+                      )}
+
                       <div className="mt-1 font-mono text-xs text-emerald-400">
-                        {document.employee.employeeId}
+                        {document.owner.ownerId}
                       </div>
                     </td>
 
@@ -162,7 +169,7 @@ export default async function AdminDocumentsPage() {
 
                     <td className="whitespace-nowrap px-5 py-4 text-slate-400">
                       {new Date(
-                        document.uploadedAt
+                        document.createdAt
                       ).toLocaleDateString("en-IN")}
                     </td>
 
@@ -209,7 +216,7 @@ export default async function AdminDocumentsPage() {
                       colSpan={6}
                       className="px-5 py-12 text-center text-slate-500"
                     >
-                      No employee documents found.
+                      No owner documents found.
                     </td>
                   </tr>
                 )}
@@ -224,7 +231,7 @@ export default async function AdminDocumentsPage() {
           </h2>
 
           <p className="mt-2 text-sm leading-6 text-slate-400">
-            Documents submitted by employees remain unverified until
+            Documents submitted by vehicle owners remain unverified until
             an authorized ETW administrator reviews them. Verification
             status changes are recorded by the server.
           </p>
